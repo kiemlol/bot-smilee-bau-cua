@@ -38,7 +38,15 @@ export default async function handler(req, res) {
 
   const sent = [];
   for (const r of replies) {
-    if (r.type === "photo") {
+    if (r.type === "video") {
+      const res = await zalo.sendVideo(String(chatId), r.video, r.caption, r.replyMarkup);
+      try { res.photo = String(r.video).split("/").pop(); } catch {}
+      sent.push(res);
+      // Same fallback as photos: if Zalo has no sendVideo, the
+      // caption still arrives as text and the result follows.
+      if (!res.sent && r.caption) sent.push(await zalo.sendText(String(chatId), r.caption, r.replyMarkup));
+    }
+    else if (r.type === "photo") {
       const res = await zalo.sendPhoto(String(chatId), r.photo, r.caption, r.replyMarkup);
       // Tag the photo filename on the result so the Runtime Log can
       // tell a board send apart from a GIF send (both are sendPhoto).
