@@ -35,8 +35,11 @@ Nút bấm inline (`reply_markup`) CHƯA xác minh được là Zalo Bot API có
 Game vẫn chơi đủ bằng cách gõ: tên con (`Cua`), số (`2`), số tiền (`50`), `Xem xu`, `hủy`, `Bầu cua`.
 Muốn thử nút: đặt `ZALO_KEYBOARD=1`, redeploy, nhắn thử — nếu Zalo không hiện nút hoặc báo lỗi, tắt lại là game vẫn chạy bằng gõ chữ.
 
-## Vì sao GIF không nằm trong deployment này
-Deploy qua API của Vercel bị giới hạn 1 argument ~128KB, file GIF 154KB không nhét chung được. Giải pháp lâu dài: đưa toàn bộ source (kể cả GIF) lên GitHub rồi import repo đó vào Vercel (git import) — lúc đó GIF sẽ ở `https://bot-smilee-bau-cua-smile-8c54.vercel.app/bau-cua-shake.gif` và không cần `GIF_URL` nữa. Đây là bước tiếp theo sau khi Khương test xong luồng bằng link tạm.
+## Git repo (đã tạo, chờ Khương bấm Connect trên Vercel)
+Repo: `kiemlol/bot-smilee-bau-cua`, nhánh `main`, đã chứa đủ code + `public/board.jpg` + `public/bau-cua-shake.gif`.
+Khương vào Vercel Dashboard -> project `bot-smilee-bau-cua` -> bấm `Connect Git Repository` (dòng hiện trong ảnh dashboard) -> chọn repo `kiemlol/bot-smilee-bau-cua` -> nhánh `main`.
+Sau khi nối xong, mỗi lần push code lên repo là Vercel tự deploy, và GIF sẽ ở `https://bot-smilee-bau-cua-smile-8c54.vercel.app/bau-cua-shake.gif` — lúc đó có thể bỏ biến `GIF_URL` (code tự dùng link gốc này khi không có `GIF_URL`).
+Lý do trước đó GIF không nằm trong deployment API: deploy qua API bị giới hạn 1 argument ~128KB, file GIF 154KB không nhét chung được.
 
 ## Test không cần token Zalo
 ```bash
