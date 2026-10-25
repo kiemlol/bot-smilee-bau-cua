@@ -1,0 +1,1 @@
+{"dependencies":{"pg":"^8.13.1"},"description":"Bot Smilee - Bau cua in-chat webhook for Zalo Bot API, Vercel serverless + Vercel Postgres","engines":{"node":">=20"},"name":"bot-smilee-bau-cua","private":true,"scripts":{"test:simulate":"node scripts/simulate.mjs"},"type":"module","version":"1.0.0"}
