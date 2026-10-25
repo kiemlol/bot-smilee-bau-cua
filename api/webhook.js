@@ -40,6 +40,9 @@ export default async function handler(req, res) {
   for (const r of replies) {
     if (r.type === "photo") {
       const res = await zalo.sendPhoto(String(chatId), r.photo, r.caption, r.replyMarkup);
+      // Tag the photo filename on the result so the Runtime Log can
+      // tell a board send apart from a GIF send (both are sendPhoto).
+      try { res.photo = String(r.photo).split("/").pop(); } catch {}
       sent.push(res);
       // If the photo itself fails (e.g. Zalo cannot fetch the GIF
       // URL), still send its caption as text so the player is not
@@ -51,7 +54,7 @@ export default async function handler(req, res) {
   // Minimal send summary for Vercel Runtime Logs (no tokens, no
   // message text): lets the next "no GIF / no reply" report be
   // diagnosed from the log instead of guessed at.
-  try { console.log(JSON.stringify({ webhook: "sent", sent: sent.map((s) => ({ method: s.method, sent: s.sent, status: s.status || null, error: s.error ? String(s.error).slice(0, 200) : null })) })); } catch {}
+  try { console.log(JSON.stringify({ webhook: "sent", sent: sent.map((s) => ({ method: s.method, photo: s.photo || null, sent: s.sent, status: s.status || null, error: s.error ? String(s.error).slice(0, 200) : null })) })); } catch {}
   // If Zalo is not configured yet, `sent` explains why, and `replies`
   // still shows exactly what the bot WOULD send - so Khương can test
   // the whole game with curl before connecting a real token.
