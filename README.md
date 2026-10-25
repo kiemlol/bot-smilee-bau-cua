@@ -25,10 +25,10 @@ Khương vào Vercel Dashboard -> project `bot-smilee-bau-cua` -> Settings -> De
 - Dán Webhook URL `https://bot-smilee-bau-cua-smile-8c54.vercel.app/api/webhook` vào ô Webhook URL, bấm Lưu thay đổi.
 - Secret Token ở đó phải trùng `ZALO_WEBHOOK_SECRET` trên Vercel. Server sẽ từ chối request nào không có header `X-Bot-Api-Secret-Token` đúng giá trị đó.
 
-## Về API gửi tin của Zalo — đã rõ base URL, còn 1 chỗ cần test thật
-- Base URL: `https://bot-api.zaloplatforms.com` (nhiều SDK độc lập Go/Python/PHP đều ghi host này, kèm method `sendMessage {chat_id, text}` và `sendPhoto {chat_id, photo, caption}`). Code đã đặt sẵn host này làm mặc định; `ZALO_API_BASE_URL` chỉ cần đặt nếu muốn ghi đè.
+## Về API gửi tin của Zalo — ĐÃ XÁC MINH từ source SDK Go (25/10)
+- Base URL: `https://bot-api.zapps.me` (source SDK Go `client.go`: `DefaultBaseURL`, hàm `endpoint` ghép `<base>/bot<token>/<method>`). Method `sendMessage {chat_id, text}` và `sendPhoto {chat_id, photo, caption}`. Code đã đặt sẵn host này làm mặc định; `ZALO_API_BASE_URL` trên Vercel phải là `https://bot-api.zapps.me` (hoặc xóa để dùng mặc định) — giá trị cũ `https://bot-api.zaloplatforms.com` không dùng nữa.
 - Webhook vào đúng dạng Go/Node SDK: `result.event_name`, `result.message.chat.id`, `text`, `from.display_name` — code đã parse đúng dạng này, cộng thêm dạng PHP (`chatId`, `user_text`) để dự phòng.
-- Chưa xác minh: token gửi đi bằng header `Authorization: Bearer` hay gắn vào đường dẫn kiểu Telegram (`/bot<token>/sendMessage`). SDK chỉ cho thấy token truyền vào client, không lộ raw HTTP. Khi test thật, nếu trả 401 thì đó là chỗ đầu tiên cần đổi, và body lỗi sẽ nằm trong response webhook (trường `sent.error`).
+- Lỗi cũ đã sửa: code trước gửi `Authorization: Bearer` tới `/sendMessage`, nên test thật 22:08 ngày 25/10 webhook đã vào (log Vercel có POST /api/webhook, secret đúng, đã chạm tới DB) nhưng gửi tin ngược ra Zalo thất bại nên người dùng không nhận được gì. Code mới gắn token vào đường dẫn kiểu Telegram, không gửi header Authorization.
 
 ## Về nút bấm
 Nút bấm inline (`reply_markup`) CHƯA xác minh được là Zalo Bot API có hỗ trợ hay không, nên mặc định TẮT (`ZALO_KEYBOARD` không đặt).
